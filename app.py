@@ -328,18 +328,12 @@ def handle_message(event):
         # 處理用戶狀態相關的輸入
         elif user_id in user_states:
             handle_user_state(event, user_id, text)
-            
+
         else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="❓ 不明白您的指令，請使用選單功能", quick_reply=create_main_menu())
-            )
+            pass
             
     except Exception as e:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=f"❌ 發生錯誤：{str(e)}", quick_reply=create_main_menu())
-        )
+        pass
 
 def handle_user_state(event, user_id, text):
     """處理用戶狀態相關的輸入"""
