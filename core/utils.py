@@ -74,3 +74,26 @@ def set_next_roommate_index(roommate_index):
         return ROOMMATES[roommate_index]
     else:
         raise ValueError("無效的室友索引")
+
+def update_schedules_for_weeks(year, month, week_roommate_map):
+    """一次更改多個週次的排程室友，不影響下個月的起始室友
+    week_roommate_map: dict {週次: 室友}
+    """
+    schedules_all = load_schedules()
+    key = f"{year}-{month}"
+    if key not in schedules_all:
+        # 若該月份尚未產生排程，則立即建立本月排程
+        generate_schedule(year, month)
+        schedules_all = load_schedules()
+        
+    schedules = schedules_all[key]['schedules']
+    print(schedules)
+    for schedule in schedules:
+        week_num = schedule['week_num']
+        if week_num in week_roommate_map:
+            schedule['roommate'] = week_roommate_map[week_num]
+    
+    print(schedules)
+    schedules_all[key]['schedules'] = schedules
+    save_schedules(schedules_all)
+    return schedules

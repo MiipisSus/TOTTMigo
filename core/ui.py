@@ -10,7 +10,8 @@ def create_main_menu():
     """建立主選單"""
     quick_reply_buttons = [
         QuickReplyButton(action=MessageAction(label="📅 查看本月排程", text="查看本月排程")),
-        QuickReplyButton(action=MessageAction(label="👤 設定下個室友", text="設定下個室友"))
+        QuickReplyButton(action=MessageAction(label="👤 設定下個室友", text="設定下個室友")),
+        QuickReplyButton(action=MessageAction(label="📝 更改本月排程", text="更改本月排程")),
     ]
     
     return QuickReply(items=quick_reply_buttons)
