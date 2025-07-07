@@ -1,5 +1,5 @@
 venv/
 .env
 roommate_config.json
-roommate_schedule.json
+roommate_schedules.json
 __pycache__/
