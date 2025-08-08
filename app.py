@@ -34,7 +34,6 @@ def callback():
 def handle_message(event):
     text = event.message.text.strip()
     today = date.today()
-    
     try:
         if text in ["倒垃圾咪狗"]:
             reply_text = "🏠 室友輪值排程系統\n\n請選擇功能："
@@ -109,6 +108,15 @@ def handle_message(event):
                 )
         elif text.startswith("!更改排程"):
             # 處理排程更改
+            schedules, config = generate_schedule(today.year, today.month)
+            
+            if isinstance(schedules, str):  # 錯誤訊息
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=schedules, quick_reply=create_main_menu())
+                )
+                return
+                
             next_roommate = ROOMMATES[config['next_roommate_index']]
             
             lines = text.split("\n")[1:]
@@ -147,4 +155,4 @@ def handle_message(event):
 
 if __name__ == "__main__":
     # app.run(debug=True, port=5000)
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8001)))
