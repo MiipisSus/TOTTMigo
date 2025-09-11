@@ -9,7 +9,7 @@ from linebot.models import (
 )
 
 from core.ui import create_main_menu, create_roommate_selection, create_schedule_flex_message
-from core.utils import generate_schedule, set_next_roommate_index, update_schedules_for_weeks
+from core.utils import generate_schedule, set_next_roommate_index, update_schedules_for_weeks, preview_next_month_schedule
 from config import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET, ROOMMATES
 
 
@@ -105,6 +105,27 @@ def handle_message(event):
                 line_bot_api.reply_message(
                     event.reply_token,
                     [flex_msg, hint_msg]
+                )
+        elif text == "預覽下月排程":
+            # 調試用命令：預覽下一個月的排程
+            result = preview_next_month_schedule(today.year, today.month)
+            
+            if isinstance(result[0], str):  # 錯誤訊息
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=result[0], quick_reply=create_main_menu())
+                )
+            else:
+                schedules, config, next_year, next_month = result
+                next_roommate = ROOMMATES[config['next_roommate_index']]
+                flex_msg = create_schedule_flex_message(schedules, next_year, next_month)
+                status_msg = TextSendMessage(
+                    text=f"🔍 下個月（{next_year}年{next_month}月）排程預覽\n⚠️ 此為預覽，不會存入系統\n下個月將從 {next_roommate} 開始",
+                    quick_reply=create_main_menu()
+                )
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    [flex_msg, status_msg]
                 )
         elif text.startswith("!更改排程"):
             # 處理排程更改

@@ -75,6 +75,40 @@ def set_next_roommate_index(roommate_index):
     else:
         raise ValueError("無效的室友索引")
 
+def preview_next_month_schedule(year, month):
+    """預覽下一個月的排程（調試用，不存入JSON）"""
+    # 計算下一個月
+    if month == 12:
+        next_year = year + 1
+        next_month = 1
+    else:
+        next_year = year
+        next_month = month + 1
+    
+    config = load_config()
+    weeks = get_weeks_of_month(next_year, next_month)
+    
+    if not weeks:
+        return f"下個月（{next_year}年{next_month}月）沒有符合條件的週次", config
+    
+    schedules = []
+    current_roommate_index = config['next_roommate_index']
+    
+    for i, week in enumerate(weeks):
+        start_day = week[0]
+        end_day = week[-1]
+        roommate_index = (current_roommate_index + i) % len(ROOMMATES)
+        roommate = ROOMMATES[roommate_index]
+        schedule_info = {
+            'roommate': roommate,
+            'start_date': start_day.strftime('%Y/%m/%d'),
+            'end_date': end_day.strftime('%Y/%m/%d'),
+            'week_num': i + 1
+        }
+        schedules.append(schedule_info)
+    
+    return schedules, config, next_year, next_month
+
 def update_schedules_for_weeks(year, month, week_roommate_map):
     """一次更改多個週次的排程室友，不影響下個月的起始室友
     week_roommate_map: dict {週次: 室友}
