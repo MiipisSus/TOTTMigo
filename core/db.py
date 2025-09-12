@@ -1,9 +1,15 @@
 import json
 import os
 
+# 判斷是否在 Fly.io 環境中，使用相應的儲存路徑
+DATA_DIR = "/app/data" if os.path.exists("/app/data") else "."
+CONFIG_FILE = os.path.join(DATA_DIR, 'roommate_config.json')
+SCHEDULES_FILE = os.path.join(DATA_DIR, 'roommate_schedules.json')
 
-CONFIG_FILE = 'roommate_config.json'
-SCHEDULES_FILE = 'roommate_schedules.json'
+def ensure_data_dir():
+    """確保資料目錄存在"""
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR, exist_ok=True)
 
 def load_config():
     """載入設定檔"""
@@ -29,6 +35,7 @@ def load_config():
 def save_config(config):
     """儲存設定檔"""
     try:
+        ensure_data_dir()
         with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
             json.dump(config, f, ensure_ascii=False, indent=2)
     except Exception as e:
@@ -47,6 +54,7 @@ def load_schedules():
 def save_schedules(schedules):
     """儲存所有月份的排程"""
     try:
+        ensure_data_dir()
         with open(SCHEDULES_FILE, 'w', encoding='utf-8') as f:
             json.dump(schedules, f, ensure_ascii=False, indent=2)
     except Exception as e:
